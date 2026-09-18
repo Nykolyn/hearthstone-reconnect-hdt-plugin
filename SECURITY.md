@@ -29,8 +29,10 @@ Code with that much access should be easy to audit, so this page lists everythin
 
 ## Verifying a release
 
-Every release is built by GitHub Actions from the tagged commit, and the build is reproducible
-(`Deterministic` + `PathMap`). Each release ships `SHA256SUMS.txt`:
+Every release is built by GitHub Actions from the tagged commit. Compilation is deterministic
+(`Deterministic` + `PathMap`), so the DLL carries no machine-specific paths. Reproducing it byte
+for byte also requires the same .NET SDK and HDT versions as the CI run, both shown in the
+workflow log. Each release ships `SHA256SUMS.txt`:
 
 ```powershell
 Get-FileHash .\MyReconnectorPlugin-vX.Y.Z.zip -Algorithm SHA256

@@ -133,6 +133,8 @@ To publish a release:
 
 ## Related
 
+- [HS Reconnector](https://github.com/Nykolyn/hearthstone-reconnect-tool): the same reconnect as a
+  standalone Windows app, no HDT needed.
 - [HDT-Reconnector](https://github.com/haoruan/HDT-Reconnector) and
   [HsReconnectTool](https://github.com/Vaiz/HsReconnectTool) use the same `SetTcpEntry` technique.
 - [Hearthstone Deck Tracker](https://github.com/HearthSim/Hearthstone-Deck-Tracker)

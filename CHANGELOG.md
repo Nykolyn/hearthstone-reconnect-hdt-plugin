@@ -34,7 +34,7 @@ First release as a standalone repository.
   code running as administrator.
 - Hosts-file priming accepts only public unicast ranges, so a tampered Hearthstone log cannot
   steer it into loopback or LAN ranges.
-- Reproducible builds: `PathMap` and deterministic compilation keep the build machine's paths
+- Deterministic builds: `PathMap` and deterministic compilation keep the build machine's paths
   out of the DLL.
 
 ### Fixed
