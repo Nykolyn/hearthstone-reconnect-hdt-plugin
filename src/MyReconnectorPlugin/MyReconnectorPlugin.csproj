@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>MyReconnectorPlugin</AssemblyName>
+    <RootNamespace>MyReconnector</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Product>Hearthstone Reconnect - HDT Plugin</Product>
+    <Description>Hearthstone Deck Tracker plugin: one-click reconnect to skip Battlegrounds combat animations.</Description>
+    <!--
+      HdtPath: the HDT app-x.y.z folder (the real HearthstoneDeckTracker.exe, not the Squirrel
+      launcher one level up). build.ps1 finds the newest installed one; otherwise pass
+      -p:HdtPath=... There is deliberately no default - a stale one builds against the wrong HDT.
+    -->
+  </PropertyGroup>
+
+  <Target Name="CheckHdtPath" BeforeTargets="BeforeBuild">
+    <Error Condition="!Exists('$(HdtPath)\HearthstoneDeckTracker.exe')"
+           Text="HearthstoneDeckTracker.exe not found in '$(HdtPath)'. Run build.ps1, or pass -p:HdtPath=&lt;HDT app-x.y.z folder&gt;." />
+  </Target>
+
+  <ItemGroup>
+    <Reference Include="HearthstoneDeckTracker">
+      <HintPath>$(HdtPath)\HearthstoneDeckTracker.exe</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="System.Xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Shared\ReconnectCore.cs" Link="Shared\ReconnectCore.cs" />
+    <Compile Include="..\Shared\GameServerLocator.cs" Link="Shared\GameServerLocator.cs" />
+    <Compile Include="..\Shared\ReverseDnsPrimer.cs" Link="Shared\ReverseDnsPrimer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

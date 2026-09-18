@@ -1,0 +1,46 @@
+name: Bug report
+description: The plugin does not load, the reconnect fails, or it is slow.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Before you paste logs, **remove anything personal**: your BattleTag,
+        your Windows user name inside file paths, and your IP address.
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      placeholder: 1.0.0
+    validations:
+      required: true
+  - type: input
+    id: hdt-version
+    attributes:
+      label: HDT version
+      description: Shown in HDT under Options → About.
+      placeholder: 1.57.12
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: HDT is running as administrator
+        - label: '"My Reconnector" is enabled in Options → Tracker → Plugins'
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead. Include the text shown on the button, if any.
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: HDT log lines
+      description: |
+        Lines containing "My Reconnector" or "Refusing to load plugin" from
+        %AppData%\HearthstoneDeckTracker\Logs\hdt_log.txt (redact personal data).
+      render: text
