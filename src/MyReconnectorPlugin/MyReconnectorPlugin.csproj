@@ -16,14 +16,21 @@
     -->
   </PropertyGroup>
 
+  <!-- Installed HDT ships HearthstoneDeckTracker.exe; the portable zip names the same assembly
+       "Hearthstone Deck Tracker.exe". -->
+  <PropertyGroup>
+    <HdtExe Condition="Exists('$(HdtPath)\HearthstoneDeckTracker.exe')">$(HdtPath)\HearthstoneDeckTracker.exe</HdtExe>
+    <HdtExe Condition="'$(HdtExe)' == '' And Exists('$(HdtPath)\Hearthstone Deck Tracker.exe')">$(HdtPath)\Hearthstone Deck Tracker.exe</HdtExe>
+  </PropertyGroup>
+
   <Target Name="CheckHdtPath" BeforeTargets="BeforeBuild">
-    <Error Condition="!Exists('$(HdtPath)\HearthstoneDeckTracker.exe')"
+    <Error Condition="'$(HdtExe)' == ''"
            Text="HearthstoneDeckTracker.exe not found in '$(HdtPath)'. Run build.ps1, or pass -p:HdtPath=&lt;HDT app-x.y.z folder&gt;." />
   </Target>
 
   <ItemGroup>
     <Reference Include="HearthstoneDeckTracker">
-      <HintPath>$(HdtPath)\HearthstoneDeckTracker.exe</HintPath>
+      <HintPath>$(HdtExe)</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="PresentationFramework" />

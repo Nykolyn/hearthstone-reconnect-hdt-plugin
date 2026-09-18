@@ -55,11 +55,15 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "Could not download HDT $tag" }
           Get-ChildItem $zipDir -Filter *.zip | ForEach-Object { Expand-Archive -LiteralPath $_.FullName -DestinationPath $hdtDir }
 
-          # Pick the managed assembly (skips a native launcher stub, if the zip ever has one).
-          $exe = Get-ChildItem $hdtDir -Recurse -Filter HearthstoneDeckTracker.exe | Where-Object {
-            try { [Reflection.AssemblyName]::GetAssemblyName($_.FullName) | Out-Null; $true } catch { $false }
+          # Find HDT by assembly name, not file name: the zip calls it "Hearthstone Deck Tracker.exe",
+          # an installed HDT "HearthstoneDeckTracker.exe".
+          $exe = Get-ChildItem $hdtDir -Recurse -Filter *.exe | Where-Object {
+            try { [Reflection.AssemblyName]::GetAssemblyName($_.FullName).Name -eq 'HearthstoneDeckTracker' } catch { $false }
           } | Select-Object -First 1
-          if (-not $exe) { throw 'HearthstoneDeckTracker.exe not found in the HDT release zip' }
+          if (-not $exe) {
+            Get-ChildItem $hdtDir -Recurse -Filter *.exe | ForEach-Object { Write-Host "  found: $($_.Name)" }
+            throw 'The HearthstoneDeckTracker assembly was not found in the HDT release zip'
+          }
 
           "HDT_PATH=$($exe.DirectoryName)" >> $env:GITHUB_ENV
           "HDT_TAG=$tag" >> $env:GITHUB_ENV

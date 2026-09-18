@@ -53,10 +53,15 @@ if (-not $HdtPath) {
     }
     $HdtPath = $appDir.Dir.FullName
 }
-if (-not (Test-Path (Join-Path $HdtPath 'HearthstoneDeckTracker.exe'))) {
+# Installed HDT: HearthstoneDeckTracker.exe. Portable zip: "Hearthstone Deck Tracker.exe".
+$hdtExe = 'HearthstoneDeckTracker.exe', 'Hearthstone Deck Tracker.exe' |
+    ForEach-Object { Join-Path $HdtPath $_ } |
+    Where-Object { Test-Path -LiteralPath $_ } |
+    Select-Object -First 1
+if (-not $hdtExe) {
     throw "HearthstoneDeckTracker.exe not found in '$HdtPath'."
 }
-$hdtVersion = [Reflection.AssemblyName]::GetAssemblyName((Join-Path $HdtPath 'HearthstoneDeckTracker.exe')).Version
+$hdtVersion = [Reflection.AssemblyName]::GetAssemblyName($hdtExe).Version
 Write-Host "Building against HDT $hdtVersion" -ForegroundColor Cyan
 
 # --- Build -------------------------------------------------------------------
