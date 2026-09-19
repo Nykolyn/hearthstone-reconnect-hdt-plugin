@@ -186,5 +186,6 @@ tools/prime-dns.ps1                            Apply or undo the hosts-file fix 
 build.ps1                                      Build, check, package, install
 ```
 
-`src/Shared` is also compiled into the standalone reconnect app, so keep it free of HDT
-dependencies.
+`src/Shared` is also compiled into the standalone app,
+[HS Reconnector](https://github.com/Nykolyn/hearthstone-reconnect-tool), so keep it free of HDT
+dependencies and keep the two copies in sync.
