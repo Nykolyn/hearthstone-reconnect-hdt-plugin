@@ -42,11 +42,18 @@ namespace MyReconnector
         private bool _warnedNotElevated;
         private string _reportedPrimerError;
         private string _reportedPrimedRange;
+        private ReconnectHistory _history;
+        private bool _reconnectInProgress;
+        private bool _unloaded;
 
         public void OnLoad()
         {
+            _unloaded = false;
             _config = PluginConfig.Load();
             CreateMenu();
+            GameEvents.OnGameStart.Add(RestoreHistory);
+            GameEvents.OnGameEnd.Add(ClearHistory);
+            GameEvents.OnInMenu.Add(ClearHistory);
 
             // HDT already knows where Hearthstone is installed; the locator falls back to the
             // running process if this is empty. Config is fully qualified on purpose — importing
@@ -70,6 +77,8 @@ namespace MyReconnector
 
         public void OnUnload()
         {
+            _unloaded = true;
+            ClearHistory();
             DetachButton();
             DetachHotkey();
             _config?.Save();
@@ -242,7 +251,7 @@ namespace MyReconnector
         {
             // The overlay button greys itself out after a press, but the hotkey and the menu item
             // bypass that, so the guard lives here where every entry point passes through it.
-            if (DateTime.UtcNow - _lastReconnectUtc < Cooldown)
+            if (_unloaded || _reconnectInProgress || DateTime.UtcNow - _lastReconnectUtc < Cooldown)
                 return;
             _lastReconnectUtc = DateTime.UtcNow;
 
@@ -252,6 +261,18 @@ namespace MyReconnector
                 WarnIfNotElevated();
                 return;
             }
+
+            ClearHistory();
+            try
+            {
+                if (Core.Game != null && !Core.Game.IsInMenu && Core.Game.IsBattlegroundsMatch)
+                    _history = ReconnectHistory.Capture(Core.Game, ReconnectHistory.MatchId(Core.Game), DateTime.UtcNow);
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("My Reconnector: could not capture board history — " + ex.Message);
+            }
+            _reconnectInProgress = true;
 
             // Prefer the exact game server connection (from Hearthstone's log); if it is unknown
             // Disconnect() falls back to the game-server port and never touches Battle.net.
@@ -268,6 +289,10 @@ namespace MyReconnector
 
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
+                        if (!result.Success)
+                            ClearHistory();
+                        if (_unloaded)
+                            return;
                         if (!result.HearthstoneRunning)
                             _button?.ShowStatus("HS NOT RUNNING");
                         else if (result.Success)
@@ -284,8 +309,32 @@ namespace MyReconnector
                 catch (Exception ex)
                 {
                     Log.Error(ex);
+                    Application.Current.Dispatcher.BeginInvoke(new Action(ClearHistory));
+                }
+                finally
+                {
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() => _reconnectInProgress = false));
                 }
             });
+        }
+
+        private void ClearHistory() => _history = null;
+
+        private void RestoreHistory()
+        {
+            var history = _history;
+            ClearHistory();
+            if (_unloaded || history == null)
+                return;
+            try
+            {
+                var count = history.Restore(Core.Game, ReconnectHistory.MatchId(Core.Game), DateTime.UtcNow);
+                Log.Info($"My Reconnector: restored {count} opponent board(s) for the same match.");
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("My Reconnector: could not restore board history — " + ex.Message);
+            }
         }
 
         /// <summary>Logs the reverse-DNS priming outcome once, so a blocked hosts write is visible.</summary>

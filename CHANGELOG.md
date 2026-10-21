@@ -6,6 +6,19 @@ uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-21
+
+### Fixed
+- Preserve known Battlegrounds opponent boards when this plugin reconnects to the same match.
+  Capture before disconnecting and restore after HDT resets its game state, without replacing
+  newly observed boards. Discard captures on failure, game end, menu entry, unload, a different
+  match, or after two minutes.
+- Prevent overlapping disconnect workers from replacing a pending history capture.
+
+### Added
+- Regression checks against HDT's actual board-state type, also run in CI.
+- [Reconnect investigation and BG Build Advisor compatibility](docs/reconnect-history.md).
+
 ## [1.0.0] - 2026-09-19
 
 First release as a standalone repository.
@@ -42,5 +55,6 @@ First release as a standalone repository.
   query and the read. The read is now retried.
 - Process handles are released after each lookup.
 
-[Unreleased]: https://github.com/Nykolyn/hearthstone-reconnect-hdt-plugin/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/Nykolyn/hearthstone-reconnect-hdt-plugin/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/Nykolyn/hearthstone-reconnect-hdt-plugin/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/Nykolyn/hearthstone-reconnect-hdt-plugin/releases/tag/v1.0.0

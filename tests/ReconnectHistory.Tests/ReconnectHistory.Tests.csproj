@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MyReconnectorPlugin\MyReconnectorPlugin.csproj" />
+    <Reference Include="HearthstoneDeckTracker">
+      <HintPath>$(HdtPath)\HearthstoneDeckTracker.exe</HintPath>
+      <HintPath Condition="!Exists('$(HdtPath)\HearthstoneDeckTracker.exe')">$(HdtPath)\Hearthstone Deck Tracker.exe</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="HearthDb">
+      <HintPath>$(HdtPath)\HearthDb.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="HearthMirror">
+      <HintPath>$(HdtPath)\HearthMirror.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

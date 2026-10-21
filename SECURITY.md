@@ -17,6 +17,8 @@ Code with that much access should be easy to audit, so this page lists everythin
   address.
 - Reads the Hearthstone install location from HDT's settings, the running process, or the
   uninstall registry key.
+- Reads HDT's match identity and copies known Battlegrounds opponent boards in memory for
+  same-match reconnect recovery. The snapshot is not written to disk.
 - Reads and writes `%AppData%\MyReconnector\config.txt`, which holds the button position and
   on/off switches.
 
