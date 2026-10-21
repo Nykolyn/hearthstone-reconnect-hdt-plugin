@@ -32,6 +32,7 @@ Unlike older reconnector plugins, this one:
 | **Game-server targeting** | Reads the current game server from Hearthstone's own network log. Battle.net (1119) and web ports (443/80) are never closed. |
 | **Fast rejoin** | Adds reverse-DNS stubs to the hosts file automatically, so a reconnect takes well under a second instead of about 15 seconds. |
 | **Crash guard** | One shared 4-second cooldown across the button, the hotkey and the menu. Reconnecting twice in quick succession can crash the game. |
+| **Opponent board history** | Saves known Battlegrounds opponent boards before reconnecting and restores them only for the same match. |
 
 ## Requirements
 
@@ -63,6 +64,9 @@ Start a match. The **RECONNECT** button appears over the game, and **Ctrl+F12** 
   the option.
 - **Log:** everything the plugin does is written to HDT's log with the prefix `My Reconnector:`
   (`%AppData%\HearthstoneDeckTracker\Logs\hdt_log.txt`).
+- **Standalone plugin:** BG Build Advisor and other companion plugins are optional. My Reconnector
+  preserves opponent boards itself. Build selection belongs to the advisor plugin and needs a
+  separate update if it resets on reconnect; see [Reconnect history](docs/reconnect-history.md).
 
 ## Troubleshooting
 
@@ -80,8 +84,9 @@ Start a match. The **RECONNECT** button appears over the game, and **Ctrl+F12** 
 In short, the plugin:
 
 1. finds Hearthstone's game-server address in `GameNetLogger.log`;
-2. closes that one TCP connection through the Windows `SetTcpEntry` API (`DELETE_TCB`);
-3. lets Hearthstone rejoin the match on its own.
+2. saves known Battlegrounds opponent boards in memory;
+3. closes that one TCP connection through the Windows `SetTcpEntry` API (`DELETE_TCB`);
+4. lets Hearthstone rejoin and restores the saved boards after HDT's reset, if the match identity matches.
 
 The full write-up covers HDT's plugin blocklist, why port 1119 must never be closed, and where
 the 15-second delay comes from: **[docs/how-it-works.md](docs/how-it-works.md)**.
@@ -96,8 +101,8 @@ The plugin runs with administrator rights, so here is everything it touches:
   `hosts.hsreconnector.bak`. Undo it with `tools/prime-dns.ps1 -Remove`, or delete the block.
 - **Settings**: `%AppData%\MyReconnector\config.txt`, which holds the button position and toggles.
 
-It sends nothing over the network, has no telemetry, and reads nothing beyond Hearthstone's own
-log files. See [SECURITY.md](SECURITY.md).
+It sends nothing over the network and has no telemetry. It reads Hearthstone's log files and
+HDT's in-memory match state. See [SECURITY.md](SECURITY.md).
 
 ## Building from source
 

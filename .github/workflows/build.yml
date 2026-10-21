@@ -69,6 +69,14 @@ jobs:
           "HDT_TAG=$tag" >> $env:GITHUB_ENV
           Write-Host "Building against HDT $tag"
 
+      - name: Check reconnect history against HDT
+        shell: pwsh
+        run: |
+          dotnet build tests/ReconnectHistory.Tests/ReconnectHistory.Tests.csproj -c Release "-p:HdtPath=$env:HDT_PATH" --nologo
+          if ($LASTEXITCODE -ne 0) { throw 'History test build failed' }
+          & ./tests/ReconnectHistory.Tests/bin/Release/net48/ReconnectHistory.Tests.exe $env:HDT_PATH
+          if ($LASTEXITCODE -ne 0) { throw 'History regression checks failed' }
+
       - name: Build, check and package
         shell: pwsh
         run: ./build.ps1 -HdtPath $env:HDT_PATH -SkipInstall -Package

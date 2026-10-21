@@ -176,6 +176,7 @@ This also means changes to HDT's overlay between versions cannot silently break 
 
 ```
 src/MyReconnectorPlugin/ReconnectorPlugin.cs   IPlugin entry point, HDT menu, cooldown
+src/MyReconnectorPlugin/ReconnectHistory.cs    Same-match opponent board snapshot recovery
 src/MyReconnectorPlugin/ReconnectWindow.cs     The RECONNECT button window
 src/MyReconnectorPlugin/GlobalHotkey.cs        System-wide Ctrl+F12
 src/MyReconnectorPlugin/PluginConfig.cs        %AppData%\MyReconnector\config.txt

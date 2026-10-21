@@ -33,6 +33,10 @@
       <HintPath>$(HdtExe)</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="HearthMirror">
+      <HintPath>$(HdtPath)\HearthMirror.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="PresentationCore" />
     <Reference Include="WindowsBase" />
